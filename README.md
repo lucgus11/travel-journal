@@ -238,7 +238,7 @@ Toutes les données sont stockées **localement** dans le navigateur via Indexed
 
 ## 📄 Licence
 
-MIT — Libre d'utilisation et de modification.
+CC 4.0
 
 ---
 
