@@ -1,0 +1,357 @@
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────────── */
+:root {
+  --bg-primary:   #0d0d1a;
+  --bg-card:      #141428;
+  --bg-elevated:  #1a1a38;
+  --gold-main:    #d4a853;
+  --gold-light:   #f0c75a;
+  --gold-dim:     #8f6820;
+  --text-primary: #e8e8f5;
+  --text-muted:   #8888aa;
+  --border:       rgba(212,168,83,0.15);
+  --glow:         rgba(212,168,83,0.08);
+  --radius-card:  16px;
+  --safe-bottom:  env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ── Typography ────────────────────────────────────── */
+h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+
+/* ── Glass cards ───────────────────────────────────── */
+.glass {
+  background: rgba(20, 20, 40, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-light {
+  background: rgba(26, 26, 56, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+}
+
+/* ── Gold grain texture overlay ────────────────────── */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  z-index: 9999;
+}
+
+/* ── Gold button ───────────────────────────────────── */
+.btn-gold {
+  @apply relative overflow-hidden font-body font-semibold;
+  background: linear-gradient(135deg, #d4a853 0%, #f0c75a 50%, #d4a853 100%);
+  background-size: 200% 100%;
+  color: #07071a;
+  transition: background-position 0.3s, transform 0.15s, box-shadow 0.2s;
+  border-radius: 12px;
+  padding: 12px 24px;
+}
+.btn-gold:hover {
+  background-position: right center;
+  box-shadow: 0 0 24px rgba(212,168,83,0.5);
+}
+.btn-gold:active { transform: scale(0.97); }
+
+/* ── Ghost button ──────────────────────────────────── */
+.btn-ghost {
+  @apply font-body font-medium;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 11px 22px;
+  transition: all 0.2s;
+}
+.btn-ghost:hover {
+  border-color: var(--gold-main);
+  color: var(--gold-light);
+  background: var(--glow);
+}
+
+/* ── Input ─────────────────────────────────────────── */
+.input-dark {
+  background: rgba(7,7,26,0.6);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  padding: 12px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.input-dark:focus {
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.15);
+}
+.input-dark::placeholder { color: var(--text-muted); }
+
+/* ── Card ──────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.card-interactive:active { transform: scale(0.98); }
+
+/* ── Gold divider ──────────────────────────────────── */
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  border: none;
+  margin: 0;
+}
+
+/* ── Navigation ────────────────────────────────────── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: var(--safe-bottom);
+  z-index: 100;
+  background: rgba(7,7,26,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Mood pills ────────────────────────────────────── */
+.mood-pill {
+  @apply px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all;
+  border: 1px solid transparent;
+}
+.mood-pill.active {
+  border-color: var(--gold-main);
+  background: rgba(212,168,83,0.15);
+  color: var(--gold-light);
+}
+.mood-pill:not(.active) {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-muted);
+}
+
+/* ── Map ───────────────────────────────────────────── */
+.leaflet-container {
+  background: #0d1117 !important;
+  font-family: 'Nunito', sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+.leaflet-popup-tip { background: var(--bg-card) !important; }
+
+/* ── Skeleton shimmer ──────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ── Photo montage ─────────────────────────────────── */
+.montage-canvas { image-rendering: crisp-edges; }
+
+/* ── Toast notifications ───────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* ── Stats badge ───────────────────────────────────── */
+.stat-badge {
+  background: linear-gradient(135deg, rgba(212,168,83,0.1), rgba(212,168,83,0.05));
+  border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+/* ── Tag pill ──────────────────────────────────────── */
+.tag-pill {
+  @apply px-2.5 py-1 rounded-full text-xs font-semibold;
+  background: rgba(74,144,217,0.15);
+  color: #7bbff0;
+  border: 1px solid rgba(74,144,217,0.25);
+}
+
+/* ── Category badge ────────────────────────────────── */
+.expense-badge {
+  @apply px-2 py-0.5 rounded-lg text-xs font-semibold;
+}
+
+/* ── Rich text editor ──────────────────────────────── */
+.rich-editor {
+  min-height: 200px;
+  background: rgba(7,7,26,0.6);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  line-height: 1.7;
+  transition: border-color 0.2s;
+}
+.rich-editor:focus { border-color: var(--gold-main); }
+.rich-editor[contenteditable=true]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.rich-editor b, .rich-editor strong { font-weight: 700; color: var(--gold-light); }
+.rich-editor i, .rich-editor em { font-style: italic; color: #aaaacc; }
+.rich-editor u { text-decoration: underline; text-decoration-color: var(--gold-dim); }
+
+/* ── Animated gradient background ─────────────────── */
+.bg-animated {
+  background: linear-gradient(135deg, #0d0d1a 0%, #0d1a2e 50%, #0d0d1a 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Progress bar ──────────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-main), var(--gold-light));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ── Media grid ────────────────────────────────────── */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.media-item { aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; }
+.media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Page enter animation ──────────────────────────── */
+.page-enter { animation: slideUp 0.35s ease-out; }
+
+/* ── Range slider ──────────────────────────────────── */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold-main);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(212,168,83,0.5);
+}
+
+/* ── Install banner ────────────────────────────────── */
+.install-banner {
+  position: fixed;
+  bottom: calc(72px + var(--safe-bottom));
+  left: 16px;
+  right: 16px;
+  z-index: 200;
+  animation: slideUp 0.4s ease-out;
+}
+
+/* ── Switch toggle ─────────────────────────────────── */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 24px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle input:checked + .toggle-slider { background: var(--gold-main); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+/* ── Confetti dot ──────────────────────────────────── */
+@keyframes confettiFall {
+  to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
