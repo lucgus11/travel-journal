@@ -7,29 +7,36 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions: { enabled: true },
       includeAssets: ['favicon.svg', 'pwa-192.png', 'pwa-512.png'],
       manifest: {
         name: 'Carnet de Voyage',
         short_name: 'Voyage',
-        description: 'Votre compagnon de voyage personnel',
+        description: 'Votre compagnon de voyage personnel — journal, photos, cartes et plus',
         theme_color: '#0d0d1a',
         background_color: '#0d0d1a',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
+        categories: ['travel', 'lifestyle', 'photo'],
         icons: [
           {
             src: 'pwa-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: 'pwa-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
@@ -46,10 +53,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'osm-tiles',
-              expiration: {
-                maxEntries: 500,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              },
+              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
               cacheableResponse: { statuses: [0, 200] }
             }
           },
@@ -58,10 +62,7 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts',
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              },
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
               cacheableResponse: { statuses: [0, 200] }
             }
           },
@@ -70,10 +71,7 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'weather-api',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60
-              },
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 },
               cacheableResponse: { statuses: [0, 200] },
               networkTimeoutSeconds: 5
             }
@@ -83,10 +81,7 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: {
               cacheName: 'geocoding',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24
-              },
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
               cacheableResponse: { statuses: [0, 200] },
               networkTimeoutSeconds: 5
             }
